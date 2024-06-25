@@ -133,10 +133,10 @@ public class ElasticsearchMetadataHandler
     {
         super(SOURCE_TYPE, configOptions);
         this.awsGlue = getAwsGlue();
+        this.secretMap = new HashMap<>();
         this.autoDiscoverEndpoint = configOptions.getOrDefault(AUTO_DISCOVER_ENDPOINT, "").equalsIgnoreCase("true");
         this.domainMapProvider = new ElasticsearchDomainMapProvider(this.autoDiscoverEndpoint);
         this.domainMap = resolveDomainMap(configOptions);
-        this.secretMap = new HashMap<>();
         this.clientFactory = new AwsRestHighLevelClientFactory(this.autoDiscoverEndpoint);
         this.glueTypeMapper = new ElasticsearchGlueTypeMapper();
         this.queryTimeout = Long.parseLong(configOptions.getOrDefault(QUERY_TIMEOUT_CLUSTER, "10"));
@@ -157,9 +157,9 @@ public class ElasticsearchMetadataHandler
     {
         super(awsGlue, keyFactory, awsSecretsManager, athena, SOURCE_TYPE, spillBucket, spillPrefix, configOptions);
         this.awsGlue = awsGlue;
+        this.secretMap = new HashMap<>();
         this.domainMapProvider = domainMapProvider;
         this.domainMap = this.domainMapProvider.getDomainMap(null);
-        this.secretMap = new HashMap<>();
         this.clientFactory = clientFactory;
         this.glueTypeMapper = new ElasticsearchGlueTypeMapper();
         this.queryTimeout = queryTimeout;
@@ -175,7 +175,10 @@ public class ElasticsearchMetadataHandler
         }
         else {
             logger.info("No secret_name provided as Config property.");
-            domainEndpoint = resolveSecrets(config.getOrDefault(DOMAIN_MAPPING, ""));
+            if (StringUtils.isBlank(domainEndpoint)) {
+                domainEndpoint = config.getOrDefault(DOMAIN_MAPPING, "");
+            }
+            domainEndpoint = resolveSecrets(domainEndpoint);
         }
 
         return domainMapProvider.getDomainMap(domainEndpoint);
