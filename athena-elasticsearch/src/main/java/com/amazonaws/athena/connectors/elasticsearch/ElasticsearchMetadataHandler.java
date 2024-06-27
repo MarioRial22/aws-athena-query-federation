@@ -220,7 +220,11 @@ public class ElasticsearchMetadataHandler
         logger.debug("doListTables: enter - " + request);
 
         String endpoint = getDomainEndpoint(request.getSchemaName());
-        AwsRestHighLevelClient client = clientFactory.getOrCreateClient(endpoint);
+        String domain = request.getSchemaName();
+        ElasticsearchCredentialProvider creds = secretMap.get(domain);
+        String username = creds != null ? creds.getCredential().getUser() : "";
+        String password = creds != null ? creds.getCredential().getPassword() : "";
+        AwsRestHighLevelClient client = creds != null ? clientFactory.getOrCreateClient(endpoint, username, password) : clientFactory.getOrCreateClient(endpoint);
         // get regular indices from ES, ignore all system indices starting with period `.` (e.g. .kibana, .tasks, etc...)
         Stream<String> indicesStream = client.getAliases()
                 .stream()
@@ -279,8 +283,9 @@ public class ElasticsearchMetadataHandler
         // Supplement GLUE catalog if not present.
         if (schema == null) {
             String index = request.getTableName().getTableName();
-            String endpoint = getDomainEndpoint(request.getTableName().getSchemaName());
-            schema = getSchema(index, endpoint);
+            String domain = request.getTableName().getSchemaName();
+            String endpoint = getDomainEndpoint(domain);
+            schema = getSchema(index, endpoint, domain);
         }
 
         return new GetTableResponse(request.getCatalogName(), request.getTableName(),
@@ -365,17 +370,21 @@ public class ElasticsearchMetadataHandler
         }
         queryPassthrough.verify(request.getQueryPassthroughArguments());
         String index = request.getQueryPassthroughArguments().get(ElasticsearchQueryPassthrough.INDEX);
-        String endpoint = getDomainEndpoint(request.getQueryPassthroughArguments().get(ElasticsearchQueryPassthrough.SCHEMA));
-        Schema schema = getSchema(index, endpoint);
+        String domain = request.getQueryPassthroughArguments().get(ElasticsearchQueryPassthrough.SCHEMA);
+        String endpoint = getDomainEndpoint(domain);
+        Schema schema = getSchema(index, endpoint, domain);
 
         return new GetTableResponse(request.getCatalogName(), request.getTableName(),
                 (schema == null) ? SchemaBuilder.newBuilder().build() : schema, Collections.emptySet());
     }
 
-    private Schema getSchema(String index, String endpoint)
+    private Schema getSchema(String index, String endpoint, String domain)
     {
         Schema schema;
-        AwsRestHighLevelClient client = clientFactory.getOrCreateClient(endpoint);
+        ElasticsearchCredentialProvider creds = secretMap.get(domain);
+        String username = creds != null ? creds.getCredential().getUser() : "";
+        String password = creds != null ? creds.getCredential().getPassword() : "";
+        AwsRestHighLevelClient client = creds != null ? clientFactory.getOrCreateClient(endpoint, username, password) : clientFactory.getOrCreateClient(endpoint);
         try {
             Map<String, Object> mappings = client.getMapping(index);
             schema = ElasticsearchSchemaUtils.parseMapping(mappings);
