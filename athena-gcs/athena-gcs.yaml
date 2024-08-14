@@ -40,7 +40,7 @@ Parameters:
     Description: "WARNING: If set to 'true' encryption for spilled data is disabled."
     Default: "false"
     Type: String
-  SecretName:
+  SecretManagerGcpCredsName:
     Description: 'Secret key name in the AWS Secrets Manager.'
     Type: String
   PermissionsBoundaryArn:
@@ -77,7 +77,7 @@ Resources:
           spill_prefix: !If [HasGlueConnection, !Ref "AWS::NoValue", !Ref SpillPrefix]
           kms_key_id: !If [NotHasGlueConnectionAndHasKmsKeyId, !Ref KmsKeyId, !Ref "AWS::NoValue"]
           glue_connection: !If [HasGlueConnection, !Ref GlueConnection, !Ref "AWS::NoValue"]
-          secret_manager_gcp_creds_name: !If [HasGlueConnection, !Ref "AWS::NoValue", !Ref SecretName]
+          secret_manager_gcp_creds_name: !If [HasGlueConnection, !Ref "AWS::NoValue", !Ref SecretManagerGcpCredsName]
       FunctionName: !Ref LambdaFunctionName
       Handler: "com.amazonaws.athena.connectors.gcs.GcsCompositeHandler"
       CodeUri: "./target/athena-gcs.zip"
@@ -135,7 +135,7 @@ Resources:
           - Action:
               - secretsmanager:GetSecretValue
             Effect: Allow
-            Resource: !Sub 'arn:${AWS::Partition}:secretsmanager:*:*:secret:${SecretName}*'
+            Resource: !Sub 'arn:${AWS::Partition}:secretsmanager:*:*:secret:${SecretManagerGcpCredsName}*'
           - Action:
               - s3:GetObject
               - s3:ListBucket

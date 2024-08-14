@@ -27,7 +27,7 @@ Parameters:
     Description: "(Optional) BigQuery Private Endpoint"
     Default: ''
     Type: String
-  SecretName:
+  SecretManagerGcpCredsName:
     Description: "The secret name within AWS Secrets Manager that contains your Google Cloud Platform Credentials."
     Type: String
   SpillBucket:
@@ -97,7 +97,7 @@ Resources:
           spill_prefix: !If [ HasGlueConnection, !Ref "AWS::NoValue", !Ref SpillPrefix ]
           kms_key_id: !If [ NotHasGlueConnectionAndHasKmsKeyId, !Ref KmsKeyId, !Ref "AWS::NoValue" ]
           glue_connection: !If [ HasGlueConnection, !Ref GlueConnection, !Ref "AWS::NoValue" ]
-          secret_manager_gcp_creds_name: !If [ HasGlueConnection, !Ref "AWS::NoValue", !Ref SecretName ]
+          secret_manager_gcp_creds_name: !If [ HasGlueConnection, !Ref "AWS::NoValue", !Ref SecretManagerGcpCredsName ]
           gcp_project_id: !If [ HasGlueConnection, !Ref "AWS::NoValue", !Ref GCPProjectID ]
           big_query_endpoint: !If [ HasGlueConnection, !Ref "AWS::NoValue", !Ref BigQueryEndpoint ]
           GOOGLE_APPLICATION_CREDENTIALS: '/tmp/service-account.json'
@@ -143,7 +143,7 @@ Resources:
           - Action:
               - secretsmanager:GetSecretValue
             Effect: Allow
-            Resource: !Sub 'arn:${AWS::Partition}:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretName}*'
+            Resource: !Sub 'arn:${AWS::Partition}:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretManagerGcpCredsName}*'
           - Action:
               - logs:CreateLogGroup
             Effect: Allow
