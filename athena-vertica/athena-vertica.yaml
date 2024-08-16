@@ -23,7 +23,7 @@ Parameters:
   SpillBucket:
     Description: 'The name of the bucket where this function can spill data.'
     Type: String
-  VerticaExportBucket:
+  ExportBucket:
     Description: "The bucket where the Vertica Query results will be exported."
     Type: String
   SpillPrefix:
@@ -56,7 +56,7 @@ Parameters:
     Description: 'The name or prefix of a set of names within Secrets Manager that this function should have access to. (e.g. vertica-*).'
     Type: String
     Default: "vertica-*"
-  VerticaConnectionString:
+  DefaultConnectionString:
     Description: 'The Vertica connection details to use by default if not catalog specific connection is defined and optionally using SecretsManager (e.g. ${secret_name}).'
     Type: String
     Default: "vertica://jdbc:vertica://<host_name>:<port>/<database>?user=${vertica-username}&password=${vertica-password}"
@@ -94,8 +94,8 @@ Resources:
           spill_prefix: !If [HasGlueConnection, !Ref "AWS::NoValue", !Ref SpillPrefix]
           kms_key_id: !If [NotHasGlueConnectionAndHasKmsKeyId, !Ref KmsKeyId, !Ref "AWS::NoValue"]
           glue_connection: !If [HasGlueConnection, !Ref GlueConnection, !Ref "AWS::NoValue"]
-          export_bucket: !If [HasGlueConnection, !Ref "AWS::NoValue", !Ref VerticaExportBucket]
-          default: !If [HasGlueConnection, !Ref "AWS::NoValue", !Ref VerticaConnectionString]
+          export_bucket: !If [HasGlueConnection, !Ref "AWS::NoValue", !Ref ExportBucket]
+          default: !If [HasGlueConnection, !Ref "AWS::NoValue", !Ref DefaultConnectionString]
       FunctionName: !Ref LambdaFunctionName
       Handler: "com.amazonaws.athena.connectors.vertica.VerticaCompositeHandler"
       CodeUri: "./target/athena-vertica-2024.18.2.jar"
@@ -144,7 +144,7 @@ Resources:
               - s3:ListBucket
             Effect: Allow
             Resource:
-              - !Sub 'arn:${AWS::Partition}:s3:::${VerticaExportBucket}'
+              - !Sub 'arn:${AWS::Partition}:s3:::${ExportBucket}'
               - !Sub 'arn:${AWS::Partition}:s3:::${SpillBucket}'
           - Action:
               - secretsmanager:GetSecretValue
@@ -180,11 +180,11 @@ Resources:
               - Fn::Sub:
                   - arn:${AWS::Partition}:s3:::${exportBucketName}
                   - exportBucketName:
-                      Ref: VerticaExportBucket
+                      Ref: ExportBucket
               - Fn::Sub:
                   - arn:${AWS::Partition}:s3:::${exportBucketName}/*
                   - exportBucketName:
-                      Ref: VerticaExportBucket
+                      Ref: ExportBucket
           - !If
             - HasGlueConnection
             - Action:

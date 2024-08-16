@@ -35,7 +35,7 @@ Parameters:
     Description: "(Optional) Name of glue connection storing connection details for Federated Data source."
     Type: String
     Default: ""
-  LambdaJDBCLayername:
+  LambdaJdbcLayername:
     Description: 'Lambda JDBC layer Name. Must be ARN of layer'
     Type: String
   LambdaTimeout:
@@ -101,7 +101,7 @@ Resources:
       FunctionName: !Ref LambdaFunctionName
       Handler: "com.amazonaws.athena.connectors.teradata.TeradataMuxCompositeHandler"
       Layers:
-        - !Ref LambdaJDBCLayername
+        - !Ref LambdaJdbcLayername
       CodeUri: "./target/athena-teradata-2024.18.2.jar"
       Description: "Enables Amazon Athena to communicate with Teradata using JDBC"
       Runtime: java11

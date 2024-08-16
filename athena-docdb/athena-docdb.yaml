@@ -49,7 +49,7 @@ Parameters:
   SecretName:
     Description: 'The name or prefix of a set of names within Secrets Manager that this function should have access to. (e.g. hbase-*).'
     Type: String
-  DocDBConnectionString:
+  DefaultDocdb:
     Description: 'The DocDB connection details to use by default if not catalog specific connection is defined and optionally using SecretsManager (e.g. ${secret_name}).'
     Type: String
     Default: "e.g. mongodb://<username>:<password>@<hostname>:<port>/?ssl=true&ssl_ca_certs=rds-combined-ca-bundle.pem&replicaSet=rs0"
@@ -87,7 +87,7 @@ Resources:
           spill_prefix: !If [HasGlueConnection, !Ref "AWS::NoValue", !Ref SpillPrefix]
           kms_key_id: !If [NotHasGlueConnectionAndHasKmsKeyId, !Ref KmsKeyId, !Ref "AWS::NoValue"]
           glue_connection: !If [HasGlueConnection, !Ref GlueConnection, !Ref "AWS::NoValue"]
-          default_docdb: !If [HasGlueConnection, !Ref "AWS::NoValue", !Ref DocDBConnectionString]
+          default_docdb: !If [HasGlueConnection, !Ref "AWS::NoValue", !Ref DefaultDocdb]
       FunctionName: !Ref LambdaFunctionName
       Handler: "com.amazonaws.athena.connectors.docdb.DocDBCompositeHandler"
       CodeUri: "./target/athena-docdb-2024.18.2.jar"

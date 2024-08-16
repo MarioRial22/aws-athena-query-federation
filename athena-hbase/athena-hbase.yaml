@@ -49,7 +49,7 @@ Parameters:
   SecretName:
     Description: 'The name or prefix of a set of names within Secrets Manager that this function should have access to. (e.g. hbase-*).'
     Type: String
-  HBaseConnectionString:
+  DefaultHbase:
     Description: 'The HBase connection details to use by default in the format: master_hostname:hbase_port:zookeeper_port and optionally using SecretsManager (e.g. ${secret_name}).'
     Type: String
     Default: ""
@@ -103,7 +103,7 @@ Resources:
           spill_prefix: !If [ HasGlueConnection, !Ref "AWS::NoValue", !Ref SpillPrefix ]
           kms_key_id: !If [ NotHasGlueConnectionAndHasKmsKeyId, !Ref KmsKeyId, !Ref "AWS::NoValue" ]
           glue_connection: !If [ HasGlueConnection, !Ref GlueConnection, !Ref "AWS::NoValue" ]
-          default_hbase: !If [ HasGlueConnection, !Ref "AWS::NoValue", !Ref HBaseConnectionString ]
+          default_hbase: !If [ HasGlueConnection, !Ref "AWS::NoValue", !Ref DefaultHbase ]
           kerberos_auth_enabled: !If [ HasGlueConnection, !Ref "AWS::NoValue", !Ref KerberosAuthEnabled ]
           kerberos_config_files_s3_reference: !If [ HasGlueConnection, !Ref "AWS::NoValue", !Ref KerberosConfigFilesS3Reference ]
           principal_name: !If [ HasGlueConnection, !Ref "AWS::NoValue", !Ref PrincipalName ]

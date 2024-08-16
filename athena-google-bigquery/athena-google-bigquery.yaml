@@ -20,7 +20,7 @@ Parameters:
     Description: 'This is the name of the lambda function that will be created. This name must satisfy the pattern ^[a-z0-9-_]{1,64}$'
     Type: String
     AllowedPattern: ^[a-z0-9-_]{1,64}$
-  GCPProjectID:
+  GcpProjectId:
     Description: "The project ID within Google Cloud Platform ."
     Type: String
   BigQueryEndpoint:
@@ -98,7 +98,7 @@ Resources:
           kms_key_id: !If [ NotHasGlueConnectionAndHasKmsKeyId, !Ref KmsKeyId, !Ref "AWS::NoValue" ]
           glue_connection: !If [ HasGlueConnection, !Ref GlueConnection, !Ref "AWS::NoValue" ]
           secret_manager_gcp_creds_name: !If [ HasGlueConnection, !Ref "AWS::NoValue", !Ref SecretManagerGcpCredsName ]
-          gcp_project_id: !If [ HasGlueConnection, !Ref "AWS::NoValue", !Ref GCPProjectID ]
+          gcp_project_id: !If [ HasGlueConnection, !Ref "AWS::NoValue", !Ref GcpProjectId ]
           big_query_endpoint: !If [ HasGlueConnection, !Ref "AWS::NoValue", !Ref BigQueryEndpoint ]
           GOOGLE_APPLICATION_CREDENTIALS: '/tmp/service-account.json'
       FunctionName: !Ref LambdaFunctionName
