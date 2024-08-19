@@ -15,8 +15,9 @@ Metadata:
 
 Parameters:
   NeptuneEndpoint:
-    Description: 'The Neptune cluster endpoint'
+    Description: '(Optional if Glue Connection is provided) The Neptune cluster endpoint'
     Type: String
+    Default: ""
   NeptunePort:
     Description: 'The Neptune port'
     Type: String
@@ -30,8 +31,9 @@ Parameters:
     Default: 'PROPERTYGRAPH'
     AllowedValues: ["PROPERTYGRAPH", "RDF"]
   GlueDatabaseName:
-    Description: 'Name of the Neptune cluster specific Glue Database that contains schemas of graph vertices'
+    Description: '(Optional if Glue Connection is provided) Name of the Neptune cluster specific Glue Database that contains schemas of graph vertices'
     Type: String
+    Default: ""
   LambdaFunctionName:
     Description: 'This is the name of the lambda function that will be created. This name must satisfy the pattern ^[a-z0-9-_]{1,64}$'
     Type: String

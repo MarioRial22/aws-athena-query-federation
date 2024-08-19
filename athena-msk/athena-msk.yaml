@@ -26,8 +26,9 @@ Parameters:
       - SSL
       - NO_AUTH
   KafkaEndpoint:
-    Description: 'MSK cluster endpoint'
+    Description: '(Optional if Glue Connection is provided) MSK cluster endpoint'
     Type: String
+    Default: ""
   LambdaFunctionName:
     Description: 'This is the name of the lambda function that will be created. This name must satisfy the pattern ^[a-z0-9-_]{1,64}$'
     Type: String
