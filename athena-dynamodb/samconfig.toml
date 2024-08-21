@@ -1,0 +1,11 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "new-sam-app"
+resolve_s3 = true
+s3_prefix = "new-sam-app"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+parameter_overrides = "AthenaCatalogName=\"fixedddb2\" SpillBucket=\"ejeffrli-spill-bucket\" SpillPrefix=\"athena-spill\" LambdaTimeout=\"900\" LambdaMemory=\"3008\" LambdaRole=\"\" DisableSpillEncryption=\"false\" KMSKeyId=\"ajgnibgibnjnb\" PermissionsBoundaryARN=\"\""
+image_repositories = []

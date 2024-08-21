@@ -1,0 +1,10 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "udf-app"
+resolve_s3 = true
+s3_prefix = "udf-app"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "LambdaFunctionName=\"myudfs\" LambdaTimeout=\"900\" LambdaMemory=\"3008\" SecretNameOrPrefix=\"\" PermissionsBoundaryARN=\"\""
+image_repositories = []
