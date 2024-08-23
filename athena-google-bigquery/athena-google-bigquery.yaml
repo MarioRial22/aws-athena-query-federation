@@ -21,7 +21,8 @@ Parameters:
     Type: String
     AllowedPattern: ^[a-z0-9-_]{1,64}$
   GcpProjectId:
-    Description: "The project ID within Google Cloud Platform ."
+    Description: "(Optional if Glue Connection is provided) The project ID within Google Cloud Platform ."
+    Default: ''
     Type: String
   BigQueryEndpoint:
     Description: "(Optional) BigQuery Private Endpoint"
