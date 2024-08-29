@@ -19,6 +19,8 @@
  */
 package com.amazonaws.athena.connector.lambda;
 
+import com.amazonaws.athena.connector.lambda.connection.GenericJdbcConnectionEnvironment;
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,12 @@ public class GlueConnectionUtils
     private static final Logger logger = LoggerFactory.getLogger(GlueConnectionUtils.class);
     private static HashMap<String, HashMap<String, String>> connectionNameCache = new HashMap<>();
 
+    private static final ImmutableSet<String> GENERIC_JDBC_CONNECTORS = ImmutableSet.of(
+            "REDSHIFT", "SAPHANA", "SNOWFLAKE", "CLOUDERAHIVE",
+            "CLOUDERAIMPALA", "HORTONSWORKHIVE", "POSTGRESQL",
+            "MYSQL"
+    );
+
     private GlueConnectionUtils()
     {
     }
@@ -57,7 +65,7 @@ public class GlueConnectionUtils
             if (cachedConfig == null) {
                 try {
                     GlueClient awsGlue = GlueClient.builder()
-                            .endpointOverride(new URI("https://glue-gamma.ap-south-1.amazonaws.com"))
+                            .endpointOverride(new URI("https://glue-gamma.us-west-2.amazonaws.com"))
                             .httpClientBuilder(ApacheHttpClient
                                     .builder()
                                     .connectionTimeout(Duration.ofMillis(CONNECT_TIMEOUT)))
@@ -65,9 +73,7 @@ public class GlueConnectionUtils
                     GetConnectionResponse glueConnection = awsGlue.getConnection(GetConnectionRequest.builder().name(glueConnectionName).build());
                     logger.debug("Successfully retrieved connection {}", glueConnectionName);
                     Connection connection = glueConnection.connection();
-                    envConfig.putAll(connection.athenaProperties());
-                    envConfig.putAll(connection.connectionPropertiesAsStrings());
-                    envConfig.putAll(authenticationConfigurationToMap(connection.authenticationConfiguration()));
+                    envConfig.putAll(getConnectionEnvironment(connection));
                     connectionNameCache.put(glueConnectionName, envConfig);
                 }
                 catch (Exception err) {
@@ -83,6 +89,25 @@ public class GlueConnectionUtils
             logger.debug("No Glue Connection name was defined in Environment Variables.");
         }
         return envConfig;
+    }
+
+    private static Map<String, String> getConnectionEnvironment(Connection connection)
+    {
+        Map<String, String> connectionEnvironment = new HashMap<>();
+
+        connectionEnvironment.putAll(connection.athenaProperties());
+        connectionEnvironment.putAll(authenticationConfigurationToMap(connection.authenticationConfiguration()));
+
+        if (GENERIC_JDBC_CONNECTORS.contains(connection.connectionTypeAsString())) {
+            GenericJdbcConnectionEnvironment genericJdbcConnectionEnvironment = new GenericJdbcConnectionEnvironment();
+            connectionEnvironment.putAll(genericJdbcConnectionEnvironment.generateEnvironment(
+                    connection.connectionTypeAsString(),
+                    connectionEnvironment.get("secret_name"),
+                    connection.connectionPropertiesAsStrings()
+            ));
+        }
+
+        return connectionEnvironment;
     }
 
     private static Map<String, String> authenticationConfigurationToMap(AuthenticationConfiguration auth)
