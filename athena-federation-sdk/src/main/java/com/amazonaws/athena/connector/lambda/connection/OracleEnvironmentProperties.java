@@ -21,11 +21,22 @@ package com.amazonaws.athena.connector.lambda.connection;
 
 import java.util.Map;
 
-public class MySqlEnvironmentProperties extends JdbcEnvironmentProperties
+public class OracleEnvironmentProperties extends JdbcEnvironmentProperties
 {
     @Override
     protected String getConnectionStringPrefix(Map<String, String> connectionProperties)
     {
-        return "mysql://jdbc:mysql://";
+        String prefix = "oracle://jdbc:oracle:thin:";
+        if (connectionProperties.containsKey(SECRET_NAME)) {
+            prefix = prefix + "${" + connectionProperties.get(SECRET_NAME) + "}";
+        }
+
+        return prefix;
+    }
+
+    @Override
+    protected String getConnectionStringSuffix(Map<String, String> connectionProperties)
+    {
+        return "/" + connectionProperties.get(DATABASE);
     }
 }

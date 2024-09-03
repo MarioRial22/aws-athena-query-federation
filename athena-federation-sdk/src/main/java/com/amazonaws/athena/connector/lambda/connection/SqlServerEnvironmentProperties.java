@@ -21,11 +21,29 @@ package com.amazonaws.athena.connector.lambda.connection;
 
 import java.util.Map;
 
-public class MySqlEnvironmentProperties extends JdbcEnvironmentProperties
+public class SqlServerEnvironmentProperties extends JdbcEnvironmentProperties
 {
     @Override
     protected String getConnectionStringPrefix(Map<String, String> connectionProperties)
     {
-        return "mysql://jdbc:mysql://";
+        return "sqlserver://jdbc:sqlserver://";
+    }
+
+    @Override
+    protected String getConnectionStringSuffix(Map<String, String> connectionProperties)
+    {
+        String suffix = ";databaseName=" + connectionProperties.get(DATABASE) + ";"
+                + connectionProperties.getOrDefault(JDBC_PARAMS, "");
+
+        if (connectionProperties.containsKey(SECRET_NAME)) {
+            if (connectionProperties.containsKey(JDBC_PARAMS)) { // need to add ampersand
+                suffix = suffix + "${" + connectionProperties.get(SECRET_NAME) + "}";
+            }
+            else {
+                suffix = suffix + "${" + connectionProperties.get(SECRET_NAME) + "}";
+            }
+        }
+
+        return suffix;
     }
 }
