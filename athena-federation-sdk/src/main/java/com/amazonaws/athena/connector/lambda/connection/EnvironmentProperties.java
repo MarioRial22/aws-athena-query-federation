@@ -34,15 +34,14 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class EnvironmentProperties
+public class EnvironmentProperties
 {
     public static final String DEFAULT_GLUE_CONNECTION = "glue_connection";
-
     private static final int CONNECT_TIMEOUT = 250;
-
     protected static final String SECRET_NAME = "secret_name";
+    protected static final String SPILL_KMS_KEY_ID = "spill_kms_key_id";
+    protected static final String KMS_KEY_ID = "kms_key_id";
     private static final Logger logger = LoggerFactory.getLogger(EnvironmentProperties.class);
-    private static HashMap<String, HashMap<String, String>> connectionNameCache = new HashMap<>();
 
     public Map<String, String> createEnvironment() throws RuntimeException
     {
@@ -51,19 +50,12 @@ public abstract class EnvironmentProperties
 
         HashMap<String, String> connectionEnvironment = new HashMap<>();
         if (StringUtils.isNotBlank(glueConnectionName)) {
-            HashMap<String, String> cachedConfig = connectionNameCache.get(glueConnectionName);
-            if (cachedConfig == null) {
-                Connection connection = getGlueConnection(glueConnectionName);
-                Map<String, String> glueSpecificProperties = connection.connectionPropertiesAsStrings();
-                glueSpecificProperties.putAll(authenticationConfigurationToMap(connection.authenticationConfiguration()));
+            Connection connection = getGlueConnection(glueConnectionName);
+            Map<String, String> connectionProperties = connection.connectionPropertiesAsStrings();
+            connectionProperties.putAll(authenticationConfigurationToMap(connection.authenticationConfiguration()));
 
-                connectionEnvironment.putAll(connection.athenaProperties());
-                connectionEnvironment.putAll(generateMissingProperties(glueSpecificProperties));
-                connectionNameCache.put(glueConnectionName, connectionEnvironment);
-            }
-            else {
-                return cachedConfig;
-            }
+            connectionEnvironment.putAll(connectionPropertiesToEnvironment(connectionProperties));
+            connectionEnvironment.putAll(athenaPropertiesToEnvironment(connection.athenaProperties()));
         }
 
         connectionEnvironment.putAll(lambdaEnvironment); // Overwrite connection environment variables with lambda environment variables
@@ -100,5 +92,28 @@ public abstract class EnvironmentProperties
         return authMap;
     }
 
-    public abstract Map<String, String> generateMissingProperties(Map<String, String> connectionProperties);
+    /**
+     * Maps glue athena properties to environment properties like 'kms_key_id'
+     *
+     * @param athenaProperties contains athena specific properties
+     * */
+    public Map<String, String> athenaPropertiesToEnvironment(Map<String, String> athenaProperties)
+    {
+        if (athenaProperties.containsKey(SPILL_KMS_KEY_ID)) {
+            String kmsKeyId = athenaProperties.remove(SPILL_KMS_KEY_ID);
+            athenaProperties.put(KMS_KEY_ID, kmsKeyId);
+        }
+        return athenaProperties;
+    }
+
+    /**
+     * Maps glue connection properties to environment properties like 'default' and 'secret_manager_gcp_creds_name'
+     * Default behavior is to not populate environment with these properties
+     *
+     * @param connectionProperties contains secret_name and connection properties
+     */
+    public Map<String, String> connectionPropertiesToEnvironment(Map<String, String> connectionProperties)
+    {
+        return new HashMap<>();
+    }
 }

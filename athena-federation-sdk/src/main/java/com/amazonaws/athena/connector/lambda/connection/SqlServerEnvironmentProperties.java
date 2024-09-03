@@ -36,8 +36,8 @@ public class SqlServerEnvironmentProperties extends JdbcEnvironmentProperties
                 + connectionProperties.getOrDefault(JDBC_PARAMS, "");
 
         if (connectionProperties.containsKey(SECRET_NAME)) {
-            if (connectionProperties.containsKey(JDBC_PARAMS)) { // need to add ampersand
-                suffix = suffix + "${" + connectionProperties.get(SECRET_NAME) + "}";
+            if (connectionProperties.containsKey(JDBC_PARAMS)) { // need to add delimiter
+                suffix = suffix + ";${" + connectionProperties.get(SECRET_NAME) + "}";
             }
             else {
                 suffix = suffix + "${" + connectionProperties.get(SECRET_NAME) + "}";

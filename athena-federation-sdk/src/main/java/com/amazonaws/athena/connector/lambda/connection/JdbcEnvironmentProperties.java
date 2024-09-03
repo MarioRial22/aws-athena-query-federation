@@ -29,16 +29,16 @@ public abstract class JdbcEnvironmentProperties extends EnvironmentProperties
     protected static final String DATABASE = "DATABASE";
 
     @Override
-    public Map<String, String> generateMissingProperties(Map<String, String> connectionProperties)
+    public Map<String, String> connectionPropertiesToEnvironment(Map<String, String> connectionProperties)
     {
-        HashMap<String, String> missingProperties = new HashMap<>();
+        HashMap<String, String> environment = new HashMap<>();
 
         // now construct jdbc string
         String connectionString = getConnectionStringPrefix(connectionProperties) + connectionProperties.get("HOST")
                 + ":" + connectionProperties.get("PORT") + getConnectionStringSuffix(connectionProperties);
 
-        missingProperties.put("default", connectionString);
-        return missingProperties;
+        environment.put(DEFAULT, connectionString);
+        return environment;
     }
 
     protected abstract String getConnectionStringPrefix(Map<String, String> connectionProperties);
@@ -49,7 +49,7 @@ public abstract class JdbcEnvironmentProperties extends EnvironmentProperties
                 + connectionProperties.getOrDefault(JDBC_PARAMS, "");
 
         if (connectionProperties.containsKey(SECRET_NAME)) {
-            if (connectionProperties.containsKey(JDBC_PARAMS)) { // need to add ampersand
+            if (connectionProperties.containsKey(JDBC_PARAMS)) { // need to add delimiter
                 suffix = suffix + "&${" + connectionProperties.get(SECRET_NAME) + "}";
             }
             else {
