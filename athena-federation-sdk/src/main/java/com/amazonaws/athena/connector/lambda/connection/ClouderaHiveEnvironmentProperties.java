@@ -21,7 +21,7 @@ package com.amazonaws.athena.connector.lambda.connection;
 
 import java.util.Map;
 
-public class HiveEnvironmentProperties extends JdbcEnvironmentProperties
+public class ClouderaHiveEnvironmentProperties extends JdbcEnvironmentProperties
 {
     private static final String SESSION_CONFS = "SESSION_CONFS";
     private static final String HIVE_CONFS = "HIVE_CONFS";
