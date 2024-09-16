@@ -28,6 +28,7 @@ public class DocDBEnvironmentProperties extends EnvironmentProperties
 {
     private static final String JDBC_PARAMS = "JDBC_PARAMS";
     private static final String DEFAULT_DOCDB = "default_docdb";
+
     @Override
     public Map<String, String> connectionPropertiesToEnvironment(Map<String, String> connectionProperties)
     {

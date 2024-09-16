@@ -31,6 +31,7 @@ public class ImpalaEnvironmentProperties extends JdbcEnvironmentProperties
         return "impala://jdbc:impala://";
     }
 
+    @Override
     protected String getDatabase(Map<String, String> connectionProperties)
     {
         return "/";

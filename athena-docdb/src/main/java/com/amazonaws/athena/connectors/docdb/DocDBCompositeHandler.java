@@ -31,6 +31,6 @@ public class DocDBCompositeHandler
 {
     public DocDBCompositeHandler()
     {
-        super(new DocDBMetadataHandler(new EnvironmentProperties().createEnvironment()), new DocDBRecordHandler(new EnvironmentProperties().createEnvironment()));
+        super(new DocDBMetadataHandler(new DocDBEnvironmentProperties().createEnvironment()), new DocDBRecordHandler(new DocDBEnvironmentProperties().createEnvironment()));
     }
 }
