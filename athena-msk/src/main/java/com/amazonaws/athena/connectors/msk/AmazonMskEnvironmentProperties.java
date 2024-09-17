@@ -19,20 +19,23 @@
  */
 package com.amazonaws.athena.connectors.msk;
 
-import com.amazonaws.athena.connector.lambda.EnvironmentProperties;
+import com.amazonaws.athena.connector.lambda.connection.EnvironmentProperties;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.CUSTOM_AUTH_TYPE;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.GLUE_CERTIFICATES_S3_REFERENCE;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.HOST;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.PORT;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.SECRET_NAME;
+import static com.amazonaws.athena.connectors.msk.AmazonMskConstants.AUTH_TYPE;
+import static com.amazonaws.athena.connectors.msk.AmazonMskConstants.CERTIFICATES_S3_REFERENCE;
+import static com.amazonaws.athena.connectors.msk.AmazonMskConstants.ENV_KAFKA_ENDPOINT;
+import static com.amazonaws.athena.connectors.msk.AmazonMskConstants.SECRET_MANAGER_MSK_CREDS_NAME;
+
 public class AmazonMskEnvironmentProperties extends EnvironmentProperties
 {
-    private static final String AUTH_TYPE = "auth_type";
-    private static final String CUSTOM_AUTH_TYPE = "CUSTOM_AUTH_TYPE";
-    private static final String CERTIFICATES_S3_REFERENCE = "certificates_s3_reference";
-    private static final String GLUE_CERTIFICATES_S3_REFERENCE = "CERTIFICATE_S3_REFERENCE";
-    private static final String SECRETS_MANAGER_SECRET = "secrets_manager_secret";
-    private static final String KAFKA_ENDPOINT = "kafka_endpoint";
-
     @Override
     public Map<String, String> connectionPropertiesToEnvironment(Map<String, String> connectionProperties)
     {
@@ -40,8 +43,8 @@ public class AmazonMskEnvironmentProperties extends EnvironmentProperties
 
         environment.put(AUTH_TYPE, connectionProperties.get(CUSTOM_AUTH_TYPE));
         environment.put(CERTIFICATES_S3_REFERENCE, connectionProperties.getOrDefault(GLUE_CERTIFICATES_S3_REFERENCE, ""));
-        environment.put(SECRETS_MANAGER_SECRET, connectionProperties.getOrDefault(SECRET_NAME, ""));
-        environment.put(KAFKA_ENDPOINT, connectionProperties.get("HOST") + ":" + connectionProperties.get("PORT"));
+        environment.put(SECRET_MANAGER_MSK_CREDS_NAME, connectionProperties.getOrDefault(SECRET_NAME, ""));
+        environment.put(ENV_KAFKA_ENDPOINT, connectionProperties.get(HOST) + ":" + connectionProperties.get(PORT));
         return environment;
     }
 }

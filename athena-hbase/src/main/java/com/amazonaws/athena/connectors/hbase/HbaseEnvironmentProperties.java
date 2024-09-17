@@ -19,22 +19,26 @@
  */
 package com.amazonaws.athena.connectors.hbase;
 
-import com.amazonaws.athena.connector.lambda.EnvironmentProperties;
+import com.amazonaws.athena.connector.lambda.connection.EnvironmentProperties;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.DEFAULT_HBASE;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.HBASE_PORT;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.HOST;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.ZOOKEEPER_PORT;
+
 public class HbaseEnvironmentProperties extends EnvironmentProperties
 {
-    private static final String DEFAULT_HBASE = "default_hbase";
     @Override
     public Map<String, String> connectionPropertiesToEnvironment(Map<String, String> connectionProperties)
     {
         Map<String, String> environment = new HashMap<>();
 
-        environment.put(DEFAULT_HBASE, connectionProperties.get("HOST")
-                + ":" + connectionProperties.get("HBASE_PORT")
-                + ":" + connectionProperties.get("ZOOKEEPER_PORT"));
+        environment.put(DEFAULT_HBASE, connectionProperties.get(HOST)
+                + ":" + connectionProperties.get(HBASE_PORT)
+                + ":" + connectionProperties.get(ZOOKEEPER_PORT));
         return environment;
     }
 }

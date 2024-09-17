@@ -19,17 +19,18 @@
  */
 package com.amazonaws.athena.connectors.google.bigquery;
 
-import com.amazonaws.athena.connector.lambda.EnvironmentProperties;
+import com.amazonaws.athena.connector.lambda.connection.EnvironmentProperties;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.PROJECT_ID;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.SECRET_NAME;
+import static com.amazonaws.athena.connectors.google.bigquery.BigQueryConstants.ENV_BIG_QUERY_CREDS_SM_ID;
+import static com.amazonaws.athena.connectors.google.bigquery.BigQueryConstants.GCP_PROJECT_ID;
+
 public class BigQueryEnvironmentProperties extends EnvironmentProperties
 {
-    private static final String PROJECT_ID = "PROJECT_ID";
-    private static final String GCP_PROJECT_ID = "gcp_project_id";
-    private static final String SECRET_MANAGER_GCP_CREDS_NAME = "secret_manager_gcp_creds_name";
-
     @Override
     public Map<String, String> connectionPropertiesToEnvironment(Map<String, String> connectionProperties)
     {
@@ -38,7 +39,7 @@ public class BigQueryEnvironmentProperties extends EnvironmentProperties
         if (connectionProperties.containsKey(PROJECT_ID)) {
             environment.put(GCP_PROJECT_ID, connectionProperties.get(PROJECT_ID));
         }
-        environment.put(SECRET_MANAGER_GCP_CREDS_NAME, connectionProperties.get(SECRET_NAME));
+        environment.put(ENV_BIG_QUERY_CREDS_SM_ID, connectionProperties.get(SECRET_NAME));
         return environment;
     }
 }

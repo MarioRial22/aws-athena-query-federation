@@ -19,29 +19,31 @@
  */
 package com.amazonaws.athena.connectors.neptune;
 
-import com.amazonaws.athena.connector.lambda.EnvironmentProperties;
+import com.amazonaws.athena.connector.lambda.connection.EnvironmentProperties;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.CLUSTER_RES_ID;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.GRAPH_TYPE;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.HOST;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.PORT;
+import static com.amazonaws.athena.connectors.neptune.Constants.CFG_ClUSTER_RES_ID;
+import static com.amazonaws.athena.connectors.neptune.Constants.CFG_ENDPOINT;
+import static com.amazonaws.athena.connectors.neptune.Constants.CFG_GRAPH_TYPE;
+import static com.amazonaws.athena.connectors.neptune.Constants.CFG_PORT;
+
 public class NeptuneEnvironmentProperties extends EnvironmentProperties
 {
-    private static final String NEPTUNE_ENDPOINT = "neptune_endpoint";
-    private static final String NEPTUNE_PORT = "neptune_port";
-    private static final String NEPTUNE_CLUSTER_RES_ID = "neptune_cluster_res_id";
-    private static final String CLUSTER_RES_ID = "CLUSTER_RESOURCE_ID";
-    private static final String NEPTUNE_GRAPHTYPE = "neptune_graphtype";
-    private static final String GRAPH_TYPE = "GRAPH_TYPE";
-
     @Override
     public Map<String, String> connectionPropertiesToEnvironment(Map<String, String> connectionProperties)
     {
         Map<String, String> environment = new HashMap<>();
 
-        environment.put(NEPTUNE_ENDPOINT, connectionProperties.get("HOST"));
-        environment.put(NEPTUNE_PORT, connectionProperties.get("PORT"));
-        environment.put(NEPTUNE_CLUSTER_RES_ID, environment.get(CLUSTER_RES_ID));
-        environment.put(NEPTUNE_GRAPHTYPE, environment.get(GRAPH_TYPE));
+        environment.put(CFG_ENDPOINT, connectionProperties.get(HOST));
+        environment.put(CFG_PORT, connectionProperties.get(PORT));
+        environment.put(CFG_ClUSTER_RES_ID, environment.get(CLUSTER_RES_ID));
+        environment.put(CFG_GRAPH_TYPE, environment.get(GRAPH_TYPE));
         return environment;
     }
 }

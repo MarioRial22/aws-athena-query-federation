@@ -19,7 +19,6 @@
  */
 package com.amazonaws.athena.connectors.docdb;
 
-import com.amazonaws.athena.connector.lambda.EnvironmentProperties;
 import com.amazonaws.athena.connector.lambda.handlers.CompositeHandler;
 
 /**

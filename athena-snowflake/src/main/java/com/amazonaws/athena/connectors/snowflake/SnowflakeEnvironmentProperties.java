@@ -23,10 +23,12 @@ import com.amazonaws.athena.connectors.jdbc.JdbcEnvironmentProperties;
 
 import java.util.Map;
 
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.DATABASE;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.SCHEMA;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.WAREHOUSE;
+
 public class SnowflakeEnvironmentProperties extends JdbcEnvironmentProperties
 {
-    private static final String WAREHOUSE = "WAREHOUSE";
-    private static final String SCHEMA = "SCHEMA";
     @Override
     protected String getConnectionStringPrefix(Map<String, String> connectionProperties)
     {

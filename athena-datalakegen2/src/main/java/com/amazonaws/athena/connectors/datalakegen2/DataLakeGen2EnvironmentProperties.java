@@ -23,6 +23,8 @@ import com.amazonaws.athena.connectors.jdbc.JdbcEnvironmentProperties;
 
 import java.util.Map;
 
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.DATABASE;
+
 public class DataLakeGen2EnvironmentProperties extends JdbcEnvironmentProperties
 {
     @Override

@@ -19,26 +19,22 @@
  */
 package com.amazonaws.athena.connectors.gcs;
 
-import com.amazonaws.athena.connector.lambda.EnvironmentProperties;
+import com.amazonaws.athena.connector.lambda.connection.EnvironmentProperties;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.SECRET_NAME;
+import static com.amazonaws.athena.connectors.gcs.GcsConstants.GCS_SECRET_KEY_ENV_VAR;
+
 public class GcsEnvironmentProperties extends EnvironmentProperties
 {
-    private static final String PROJECT_ID = "PROJECT_ID";
-    private static final String GCP_PROJECT_ID = "gcp_project_id";
-    private static final String SECRET_MANAGER_GCP_CREDS_NAME = "secret_manager_gcp_creds_name";
-
     @Override
     public Map<String, String> connectionPropertiesToEnvironment(Map<String, String> connectionProperties)
     {
         Map<String, String> environment = new HashMap<>();
 
-        if (connectionProperties.containsKey(PROJECT_ID)) {
-            environment.put(GCP_PROJECT_ID, connectionProperties.get(PROJECT_ID));
-        }
-        environment.put(SECRET_MANAGER_GCP_CREDS_NAME, connectionProperties.get(SECRET_NAME));
+        environment.put(GCS_SECRET_KEY_ENV_VAR, connectionProperties.get(SECRET_NAME));
         return environment;
     }
 }

@@ -23,12 +23,13 @@ import com.amazonaws.athena.connectors.jdbc.JdbcEnvironmentProperties;
 
 import java.util.Map;
 
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.HIVE_CONFS;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.HIVE_VARS;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.SECRET_NAME;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.SESSION_CONFS;
+
 public class ClouderaHiveEnvironmentProperties extends JdbcEnvironmentProperties
 {
-    private static final String SESSION_CONFS = "SESSION_CONFS";
-    private static final String HIVE_CONFS = "HIVE_CONFS";
-    private static final String HIVE_VARS = "HIVE_VARS";
-
     @Override
     protected String getConnectionStringPrefix(Map<String, String> connectionProperties)
     {

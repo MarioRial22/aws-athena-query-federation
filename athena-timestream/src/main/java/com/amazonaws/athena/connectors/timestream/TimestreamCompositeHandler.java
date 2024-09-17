@@ -19,7 +19,7 @@
  */
 package com.amazonaws.athena.connectors.timestream;
 
-import com.amazonaws.athena.connector.lambda.EnvironmentProperties;
+import com.amazonaws.athena.connector.lambda.connection.EnvironmentProperties;
 import com.amazonaws.athena.connector.lambda.handlers.CompositeHandler;
 
 public class TimestreamCompositeHandler

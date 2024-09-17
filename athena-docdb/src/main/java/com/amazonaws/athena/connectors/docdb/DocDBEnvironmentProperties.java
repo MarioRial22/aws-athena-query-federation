@@ -19,24 +19,27 @@
  */
 package com.amazonaws.athena.connectors.docdb;
 
-import com.amazonaws.athena.connector.lambda.EnvironmentProperties;
+import com.amazonaws.athena.connector.lambda.connection.EnvironmentProperties;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.DEFAULT_DOCDB;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.HOST;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.JDBC_PARAMS;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.PORT;
+import static com.amazonaws.athena.connector.lambda.connection.EnvironmentConstants.SECRET_NAME;
+
 public class DocDBEnvironmentProperties extends EnvironmentProperties
 {
-    private static final String JDBC_PARAMS = "JDBC_PARAMS";
-    private static final String DEFAULT_DOCDB = "default_docdb";
-
     @Override
     public Map<String, String> connectionPropertiesToEnvironment(Map<String, String> connectionProperties)
     {
         Map<String, String> environment = new HashMap<>();
 
         String connectionString = "mongodb://${" + connectionProperties.get(SECRET_NAME) + "}@"
-                + connectionProperties.get("HOST") + connectionProperties.get("PORT") + "/?"
-                + connectionProperties.getOrDefault("JDBC_PARAMS", "");
+                + connectionProperties.get(HOST) + connectionProperties.get(PORT) + "/?"
+                + connectionProperties.getOrDefault(JDBC_PARAMS, "");
         environment.put(DEFAULT_DOCDB, connectionString);
         return environment;
     }
